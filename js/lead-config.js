@@ -54,7 +54,13 @@ export const LEADS = [
     robe: '#c6b0de', robeDeep: .8, over: '#7b5ca8', inner: '#f2eef5', trim: '#5a3e85', belt: '#4b346e', boots: '#181520', skin: '#f6d2bc',
     hair: 'high', fringe: 'linhan', hairTint: '#1e1a24', hairDeep: '#100d14', hairLight: '#7c7390', face: 'slim', hem: .46, height: 1.02, prop: 'sword',
     stance: { lean: -.02, chin: -.03, armOut: .03 },
-    look: { iris: '#2c2333', irisLight: '#9a86bd', eye: 'sharp', mouth: '#b86670', mouthWidth: .017, mouthCurve: 6 } }
+    look: { iris: '#2c2333', irisLight: '#9a86bd', eye: 'sharp', mouth: '#b86670', mouthWidth: .017, mouthCurve: 6 } },
+  // 包哥：本项目原创人物，不出自原剧。全员里最高最壮，赤手空拳；招式带 lethal，打中谁谁倒（见 lead-attacks.js）。
+  { id: 'baoge', name: '包哥', caption: '一拳定音', description: '墨黑短打外罩赤金无袖褂，宽皮战腰封，双臂铁护腕，赤手空拳。武力深不见底，从没人见过他出第二拳——打中谁，谁就倒下。', color: '#b8862f',
+    robe: '#2b2a2e', robeDeep: .7, over: '#c08a2c', inner: '#efe6d2', trim: '#8a5a1e', belt: '#3a2a1c', boots: '#1d1b1e', skin: '#e3b08f',
+    hair: 'bun', fringe: 'fengbuhai', hairTint: '#1e1a18', hairDeep: '#100d0c', hairLight: '#6e5e52', face: 'round', hem: .3, height: 1.08, prop: null,
+    stance: { lean: -.03, chin: -.04, armOut: .1 },
+    look: { iris: '#2a1d14', irisLight: '#c08a48', eye: 'bold', mouth: '#a5604c', mouthWidth: .024, mouthCurve: 10 } }
 ];
 // 图鉴里的人物位：形态不单独占位
 export const ROSTER = LEADS.filter((c) => !c.formOf);

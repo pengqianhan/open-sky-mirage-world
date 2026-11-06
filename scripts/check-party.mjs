@@ -39,7 +39,7 @@ const dist = (a) => Math.hypot(a.position.x - leaderPos().x, a.position.z - lead
   assert.equal(party.enable().replaced, '童童');
   console.log(`enable: ${(performance.now() - t0).toFixed(0)}ms`);
   assert.equal(controller.activeCharacter, PARTY_ROSTER[0].id);
-  for (const id of ['zengxin', 'jingnan', 'tongtong', 'dongzi', 'gutingmei']) {
+  for (const id of ['zengxin', 'jingnan', 'tongtong', 'dongzi', 'gutingmei', 'baoge']) {
     assert.ok(!party.snapshot().some((m) => m.id === id));
     assert.ok(!party.actors.some((a) => a.charRig.config.id === id));
     assert.equal(party.takeControl(id).ok, false, `${id} must stay out of the party`);

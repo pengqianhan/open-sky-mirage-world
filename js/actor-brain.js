@@ -20,7 +20,8 @@ export const TRAITS = {
   zengxin: { intent: 'follow', aggro: 12, retreatBelow: .45 },
   jingnan: { intent: 'follow', aggro: 28, retreatBelow: .15 },
   dongzi: { intent: 'hold', aggro: 8, retreatBelow: .5 },
-  gutingmei: { intent: 'follow', aggro: 20, retreatBelow: .35 }
+  gutingmei: { intent: 'follow', aggro: 20, retreatBelow: .35 },
+  baoge: { intent: 'attack', aggro: 36, retreatBelow: .05 }
 };
 export const traitOf = (id) => TRAITS[id] || DEFAULT_TRAIT;
 

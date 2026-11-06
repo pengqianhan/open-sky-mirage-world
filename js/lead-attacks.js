@@ -15,7 +15,8 @@
 //
 // hit is what the strike does in the world (enemies.js): range in metres, arc in radians (a fan ahead of the
 // player), damage, knock-back, and pierce = hits everyone in the fan rather than only the nearest. A clip with a
-// second beat (流萤交剪, 匣中飞针) applies it twice.
+// second beat (流萤交剪, 匣中飞针) applies it twice. lethal = whatever it reaches dies outright: armour and the
+// companions' damage scale are ignored, and damage is only what the gallery shows (包哥).
 
 const DEFAULTS = {
   torso: [0, 0, 0], head: [0, 0, 0], root: [0, 0], legL: [0, 0, 0], legR: [0, 0, 0], skirt: [0, 1], hair: [0, 0],
@@ -281,6 +282,27 @@ const SPECS = {
       { t: .58, torso: [.08, .12, 0], head: [-.04, -.08, 0], root: [.02, .04], handR: [-.12, .24, .3], handL: [.12, .22, .26], hair: [.03, 0] },
       { t: .9, torso: [0, 0, 0], head: [0, 0, 0], root: [0, 0], legL: [0, 0, 0], legR: [0, 0, 0], skirt: [0, 1], handR: DEFAULTS.handR, handL: DEFAULTS.handL, hair: [0, 0] },
       { t: 1.05 }
+    ]
+  },
+
+  // 包哥：拧腰蓄力、踏步出一记直拳，金色拳劲层层推开。lethal：前方扇形里的人一拳全倒，Boss 也不例外。
+  baoge: {
+    title: '一拳定音', hit: { range: 6, arc: 1.4, damage: 999, knock: 12, pierce: true, lethal: true }, strike: .42, duration: 1.2, cancelAt: .82,
+    sound: { from: 620, to: 60, duration: .42, gain: .14 },
+    glows: [{ hand: 'R', from: .2, to: .6, radius: .12, color: '#ffb52e' }],
+    rings: [
+      { t: .42, life: .3, at: { hand: 'R' }, axis: 'forward', radius: [.06, .5], travel: .6, color: '#ffd36a' },
+      { t: .45, life: .36, at: { hand: 'R' }, axis: 'forward', radius: [.1, .8], travel: 1.2, color: '#ffb52e' },
+      { t: .48, life: .42, at: { hand: 'R' }, axis: 'forward', radius: [.14, 1.1], travel: 1.9, color: '#ff8a1e' }
+    ],
+    keys: [
+      { t: 0 },
+      { t: .24, torso: [-.06, -.8, 0], head: [.03, .66, 0], root: [0, -.03], legL: [-.12, .04, .2], legR: [.14, .03, .26], skirt: [0, 1.3], handR: [-.24, .08, -.16], handL: [.14, .3, .3], hair: [.04, 0] },
+      { t: .36, torso: [.08, .1, 0], head: [-.04, 0, 0], root: [0, .09], legL: [-.18, .04, .1], legR: [.18, .03, .14], skirt: [-.02, 1.36], handR: [-.2, .22, .2], handL: [.24, .18, .12], hair: [.12, 0] },
+      { t: .42, torso: [.22, .64, 0], head: [-.13, -.55, 0], root: [0, .19], legL: [-.22, .04, .06], legR: [.22, .03, .12], skirt: [-.03, 1.42], handR: [-.232, .28, .335], handL: [.25, .05, -.12], hair: [.28, 0] },
+      { t: .66, torso: [.18, .58, 0], head: [-.09, -.5, 0], root: [0, .19], handR: [-.226, .27, .32], handL: [.25, .04, -.1], hair: [.14, 0] },
+      { t: 1.02, torso: [0, 0, 0], head: [0, 0, 0], root: [0, 0], legL: [0, 0, 0], legR: [0, 0, 0], skirt: [0, 1], handR: DEFAULTS.handR, handL: DEFAULTS.handL, hair: [0, 0] },
+      { t: 1.2 }
     ]
   }
 };

@@ -487,6 +487,18 @@ export function createLeadCharacter(id = 'caosheng') {
     waistBand('waist-sash', .05, .004, belt);
     orb(hips, 'jade-buckle', [0, .0, .132], [.022, .02, .01], ivory);
     for (const side of [-1, 1]) strap(torso, `hair-ribbon-${side < 0 ? 'r' : 'l'}`, [[side * .07, .34, -.08], [side * .11, .3, .06], [side * .1, .2, .13], [side * .095, .06, .14]], .016, .004, own(fabricMaterial(named('ribbon'), '#dcc8f0', { deep: .92 })), chestOut);
+  } else if (c.id === 'baoge') {
+    collar(trim, .018);
+    // 包哥（原创）：赤金无袖褂敞在墨黑短打外，宽皮战腰封配圆铜扣，双臂铁护腕，拳上缠白布。
+    mesh(torso, 'gold-vest', loft([[.312, .114, .09], [.2, .17, .128], [.09, .163, .128], [-.03, .156, .126]], { segments: 48, start: .36, arc: TAU - .72 }), over);
+    mesh(skirt, 'vest-tail', loft([[.01, .16, .128], [-.1, .18, .148]], { segments: 48, start: .36, arc: TAU - .72, pleats: .02 }), over);
+    waistBand('war-belt', .066, -.008, belt, .009);
+    orb(hips, 'belt-buckle', [0, .029, .135], [.032, .03, .012], metal);
+    for (const { sign, elbow, hand } of arms) {
+      const side = sign > 0 ? 'left' : 'right';
+      for (const [k, y] of [-.1, -.135, -.17].entries()) ring(elbow, `${side}-iron-bracer-${k}`, [0, y, 0], .057 - k * .002, .0075, metal);
+      ring(hand, `${side}-fist-wrap`, [0, -.006, .003], .043, .009, ivory, 1.1);
+    }
   } else {
     collar(trim);
     waistBand('waist-sash', .05, .004, belt);

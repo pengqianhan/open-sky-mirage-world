@@ -428,9 +428,10 @@ export function createEnemySystem(scene, { resolve = null, onPlayerHit = null, o
   const guBoss = enemies.find((e) => e.type === 'gutingmei');
   const sanyeBoss = enemies.find((e) => e.type === 'sanye');
 
+  /** amount = Infinity 是致命一击（包哥）：无视护甲，正好打掉剩下的血。 */
   function damage(e, amount, from, knock = 0, healer = player) {
     if (!alive(e)) return false;
-    const dealt = Math.round(amount * e.def.armor);
+    const dealt = amount === Infinity ? Math.ceil(e.hp) : Math.round(amount * e.def.armor);
     e.hp -= dealt;
     e.flash = 1; e.barTimer = 4;
     if (e.rig.reveal) e.rig.reveal.value = 1;
@@ -489,7 +490,8 @@ export function createEnemySystem(scene, { resolve = null, onPlayerHit = null, o
     }
     hits.sort((a, b) => a[0] - b[0]);
     const list = hit.pierce ? hits : hits.slice(0, 1);
-    list.forEach(([, e]) => damage(e, hit.damage * scale, ent.position, (hit.knock || 0) * scale, healer));
+    // lethal 不吃同伴减伤：包哥打谁都是一击倒
+    list.forEach(([, e]) => damage(e, hit.lethal ? Infinity : hit.damage * scale, ent.position, (hit.knock || 0) * scale, healer));
     return list.length;
   }
 

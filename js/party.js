@@ -10,8 +10,8 @@ import { createBrain, parseDirective, stepBrain, traitOf } from './actor-brain.j
 const COMPANION_DAMAGE = .35; // 七个人一起打，单人要轻：铁甲人不能一秒就倒，主要输出还是玩家
 const COMPANION_MAX_HP = 100, DOWN_FOR = 14, REGROUP_DISTANCE = 70, REGROUP_HEIGHT = 14, REGROUP_AFTER = 1.2, HIDE_BEYOND = 150, CAMERA_HIDE = 2.8;
 const seatOf = (id) => getLead(id).formOf || getLead(id).id;
-/** 群像里的人。曾信（含荆南王形态）、童童、只守在清风楼门口的东子与顾府二公子顾廷美不进群像，单人模式下仍可在图鉴里选。 */
-export const PARTY_ROSTER = ROSTER.filter((c) => !['zengxin', 'tongtong', 'dongzi', 'gutingmei'].includes(c.id));
+/** 群像里的人。曾信（含荆南王形态）、童童、只守在清风楼门口的东子、顾府二公子顾廷美与一拳必杀的包哥不进群像，单人模式下仍可在图鉴里选。 */
+export const PARTY_ROSTER = ROSTER.filter((c) => !['zengxin', 'tongtong', 'dongzi', 'gutingmei', 'baoge'].includes(c.id));
 const inParty = (seat) => PARTY_ROSTER.some((c) => c.id === seat);
 
 export function createParty({ scene, controller, enemies, onDown = null, onRise = null }) {

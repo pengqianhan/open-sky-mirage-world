@@ -253,6 +253,26 @@ console.table(results);
     assert.equal(sys.strike(ent,{...hit,arc:.4}),0,`${id}: strike hit an enemy behind the player`);
     ent.heading=0;
   }
+  // 包哥: one blow kills every enemy type, bosses included, even with a companion's damage scale; other leads do not.
+  {
+    const bs=createEnemySystem(new Scene()),{hit}=createLeadCharacter('baoge').attack;
+    assert.equal(hit.lethal,true,'baoge: attack must be lethal');
+    for(const damageScale of [1,.35])for(const o of bs.enemies){
+      o.dormant=false;o.state='idle';o.hp=o.def.hp;o.knock.set(0,0,0);
+      const at={position:o.pos.clone().add(new Vector3(0,0,-2)),heading:0,damageScale,vitals:{hp:100,max:100}};
+      assert.ok(bs.strike(at,hit)>=1,`baoge: missed ${o.type}`);
+      assert.equal(o.state,'dead',`baoge: ${o.type} survived one blow (scale ${damageScale})`);
+      assert.equal(o.hp,0,`baoge: ${o.type} hp not emptied`);
+    }
+    const boss=bs.enemies.find(o=>o.type==='bailiTrue');
+    boss.dormant=false;boss.state='idle';boss.hp=boss.def.hp;
+    for(const {id} of LEADS.filter(c=>c.id!=='baoge')){
+      const {hit:other}=createLeadCharacter(id).attack;
+      assert.ok(!other.lethal,`${id}: only baoge is lethal`);
+    }
+    bs.strike({position:boss.pos.clone().add(new Vector3(0,0,-2)),heading:0},createLeadCharacter('caosheng').attack.hit);
+    assert.notEqual(boss.state,'dead','an ordinary blow must not one-shot the true Baili');
+  }
   // Aiming: a blow started with an enemy behind turns to it and lands; with nobody near it leaves the heading alone.
   {
     const hit={range:4,arc:.6,damage:1,pierce:false},back={position:e.pos.clone().add(new Vector3(0,0,2)),heading:0};
