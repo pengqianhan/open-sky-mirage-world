@@ -14,7 +14,8 @@ const AIM_SLACK = 1.5, AIM_MAX = 12, CAMERA_CLEAR = 2.2, CAMERA_LANE = 1.5, CAME
 
 export const ENEMY_TYPES = {
   jiashi: { name: '百里渊甲士', hp: 45, armor: 1, damage: 8, speed: 5.2, reach: 2.5, aggro: 30, windup: .5, cooldown: 1.5, scale: 1.12, poise: false, radius: .7 },
-  tiejia: { name: '铁甲人', hp: 170, armor: .7, damage: 20, speed: 3.6, reach: 3, aggro: 34, windup: .8, cooldown: 2.2, scale: 1.5, poise: true, radius: 1 },
+  // 普通行人含发髻高 1.89；铁甲人含盔顶高 1.46，等比放大至两倍行人身高。
+  tiejia: { name: '铁甲人', hp: 170, armor: .7, damage: 20, speed: 3.6, reach: 3, aggro: 34, windup: .8, cooldown: 2.2, scale: (1.89 * 2) / 1.46, poise: true, radius: 1 },
   wuxing: { name: '无形怪物', hp: 34, armor: 1, damage: 12, speed: 7.6, reach: 2.2, aggro: 26, windup: .34, cooldown: 1.7, scale: 1.12, poise: false, radius: .7 },
   // 第 20 集曾倩刺中的只是替身；第 21 集真身才露面。这里照剧情分两段打。
   bailiDouble: { name: '百里渊', rig: 'baili', hp: 130, armor: 1, damage: 12, speed: 5.4, reach: 3.3, aggro: 15, windup: .55, cooldown: 1.4, scale: 1.6, poise: true, radius: 1, boss: true },
