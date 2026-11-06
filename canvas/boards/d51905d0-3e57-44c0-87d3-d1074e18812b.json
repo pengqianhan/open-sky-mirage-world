@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "nodes": [
+    {
+      "id": "lead-runtime-caosheng",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-caosheng",
+        "mediaType": "image"
+      },
+      "title": "曹晟 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-zengqian",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-zengqian",
+        "mediaType": "image"
+      },
+      "title": "曾倩 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-fengbuhai",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-fengbuhai",
+        "mediaType": "image"
+      },
+      "title": "封不害 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-yunniang",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-yunniang",
+        "mediaType": "image"
+      },
+      "title": "芸娘 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-xiejingtang",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-xiejingtang",
+        "mediaType": "image"
+      },
+      "title": "谢景棠 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-linhan",
+      "type": "asset",
+      "data": {
+        "assetId": "lead-runtime-linhan",
+        "mediaType": "image"
+      },
+      "title": "林寒 · 已接入角色",
+      "description": "实际运行画面；点击游戏中的主演图鉴或按 P 查看三维角色。"
+    },
+    {
+      "id": "lead-runtime-qa",
+      "type": "file",
+      "data": {
+        "path": "assets/characters/runtime-previews/QA.md"
+      },
+      "title": "主演卡通版 · 验收记录"
+    }
+  ],
+  "edges": [],
+  "id": "d51905d0-3e57-44c0-87d3-d1074e18812b"
+}

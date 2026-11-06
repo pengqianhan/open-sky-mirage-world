@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>《海市蜃楼》登州与空中蜃景 · Three.js WebGPU 3D 交互世界</title>
+  <link rel="icon" href="data:," />
+  <meta name="description" content="参考 mrdoob/slop-newyork 与 Kimi 3D 建模工作流构建的《海市蜃楼》登州城、悬空玄铁长索与空中蜃景 Three.js WebGPU + TSL 交互世界。" />
+
+  <script type="importmap" data-static-preview>{"imports":{"three":"https://cdn.jsdelivr.net/gh/mrdoob/three.js@b3396270682287470d161658ac01084d25e8dba6/build/three.webgpu.js","three/webgpu":"https://cdn.jsdelivr.net/gh/mrdoob/three.js@b3396270682287470d161658ac01084d25e8dba6/build/three.webgpu.js","three/tsl":"https://cdn.jsdelivr.net/gh/mrdoob/three.js@b3396270682287470d161658ac01084d25e8dba6/build/three.tsl.js","three/addons/":"https://cdn.jsdelivr.net/gh/mrdoob/three.js@b3396270682287470d161658ac01084d25e8dba6/examples/jsm/"}}</script>
+  <script type="module" src="./js/main.js"></script>
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/characters.css" />
+</head>
+<body>
+  <!-- 24 × 24 矢量图标集 -->
+  <svg class="icon-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4.4" r="2"/><path d="M12.3 8.2 10.8 13.8M10.8 13.8 9.2 17.2 7.2 20.5M10.8 13.8l2.4 3 1.6 3.8M12.3 8.6 9.6 10.2l-.8 2.6M12.3 8.6l2.1 2.4 2.4.8"/></symbol>
+      <symbol id="i-horse" viewBox="0 0 24 24"><path d="M4 16v4M8 16v4M15 16v4M19 16v4"/><path d="M4 14c0-2 2-3 5-3h6l3-5 3 2-1.5 5c.5.8.5 2 .5 3H4z"/></symbol>
+      <symbol id="i-chain" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+      <symbol id="i-fly" viewBox="0 0 24 24"><path d="M2 12c4-5 8-6 10-2 2-4 6-3 10 2-4 1-7 2-10 6-3-4-6-5-10-6z"/><path d="M12 6v14"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.1M12 19.1v2.1M2.8 12h2.1M19.1 12h2.1M5.5 5.5 7 7M17 17l1.5 1.5M5.5 18.5 7 17M17 7l1.5-1.5"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.6A7.8 7.8 0 0 1 9.4 4.5a7.8 7.8 0 1 0 10.1 10.1z"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5 3.5 6.6v13l5.5-2.1 6 2.1 5.5-2.1v-13L15 6.6 9 4.5zM9 4.5v13M15 6.6v13"/></symbol>
+      <symbol id="i-github" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3.5 3.5l17 17M10.6 5.6c.5-.1.9-.1 1.4-.1 6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.4 3.2M6.6 6.6A15.6 15.6 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.6 0 3.1-.4 4.4-1.1"/></symbol>
+      <symbol id="i-group" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="3"/><path d="M6.5 20c0-3.6 2.4-6 5.5-6s5.5 2.4 5.5 6"/><path d="M5.8 6.6a2.5 2.5 0 0 0 .4 4.9M3 18.6c0-2.6 1-4.4 2.9-5.2M18.2 6.6a2.5 2.5 0 0 1-.4 4.9M21 18.6c0-2.6-1-4.4-2.9-5.2"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="m11 4-5 4H3v8h3l5 4V4ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol>
+      <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="m11 4-5 4H3v8h3l5 4V4ZM16 9l6 6M22 9l-6 6"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5"/></symbol>
+      <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M14.5 6.5 9 12l5.5 5.5"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9.5 6.5 5.5 5.5-5.5 5.5"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><rect x="2.8" y="6.5" width="12.4" height="11" rx="2.4"/><path d="m15.2 10.4 6-3.4v10l-6-3.4"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5.5 12h13"/></symbol>
+      <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.4"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><path d="M12 2.5v3.1M12 18.4v3.1M2.5 12h3.1M18.4 12h3.1"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m20 20-4.6-4.6"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- 加载界面 -->
+  <div id="loading-overlay" role="status" aria-live="polite">
+    <div class="loader">
+      <span class="mta-bullet loader-bullet" aria-hidden="true">蜃</span>
+      <div class="loader-title">海市蜃楼 · 登州与蜃景</div>
+      <div class="loader-subtitle">登云铁索相连 · 双城立体交互世界</div>
+      <div class="loader-track is-indeterminate" aria-hidden="true"><span id="loading-progress" class="loader-fill"></span></div>
+      <div id="loading-status">正在载入登州城与空中蜃景三维场景...</div>
+    </div>
+  </div>
+
+  <!-- 3D WebGPU 视口容器 -->
+  <main id="canvas-container" aria-label="《海市蜃楼》登州与空中蜃景 3D 视口"></main>
+
+  <!-- 左上角：品牌信息 -->
+  <header class="hud hud-top-left">
+    <div class="panel brand">
+      <span class="mta-bullet" aria-hidden="true">蜃</span>
+      <div class="brand-titles">
+        <div class="brand-heading">
+          <h1>海市蜃楼 · 登州与蜃景</h1>
+        </div>
+        <div class="brand-subtitle">three.js · WebGPU · TSL · 登云铁索 · <span id="hud-fps" class="fps-ok">60</span> fps</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 右上角工具栏：五种剧情天象、传送、双界舆图、音效与纯净视图 -->
+  <div class="hud hud-top-right">
+    <div id="hud-toolbar" class="panel toolbar">
+      <button id="btn-toolbar-collapse" class="tool-btn icon-only" type="button" title="收起工具栏" aria-label="收起工具栏" aria-expanded="true" aria-controls="hud-toolbar">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+      <div class="time-switch" role="group" aria-label="日间与夜间切换">
+        <button id="time-day" class="time-btn active" data-time="day" type="button" title="日间模式">
+          <svg class="icon" aria-hidden="true"><use href="#i-sun"></use></svg><span class="seg-label">日间</span>
+        </button>
+        <button id="time-night" class="time-btn" data-time="night" type="button" title="夜间模式">
+          <svg class="icon" aria-hidden="true"><use href="#i-moon"></use></svg><span class="seg-label">夜间</span>
+        </button>
+      </div>
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      <button id="btn-teleport" class="tool-btn" type="button" title="快速传送至登州、铁索或空中蜃景">
+        <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span class="tool-label">传送</span><svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+      <button id="btn-party" class="tool-btn" type="button" title="群像模式：同伴同行，AI 操控，可随时换人 [T]" aria-pressed="false">
+        <svg class="icon" aria-hidden="true"><use href="#i-group"/></svg><span class="tool-label">群像</span><kbd>T</kbd>
+      </button>
+      <button id="btn-open-map" class="tool-btn" type="button" title="打开登州与空中蜃景全屏舆图 [M]">
+        <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg><span class="tool-label">舆图</span><kbd>M</kbd>
+      </button>
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      <button id="btn-sound" class="tool-btn icon-only" type="button" title="开启/静音东方环境声景 [N]" aria-label="音效开关" aria-pressed="false">
+        <svg class="icon" aria-hidden="true"><use href="#i-sound-off"/></svg>
+      </button>
+      <button id="btn-toggle-hud" class="tool-btn icon-only" type="button" title="纯净视图：隐藏界面 [H]" aria-label="隐藏界面" aria-pressed="false">
+        <svg class="icon icon-hide" aria-hidden="true"><use href="#i-eye"/></svg><svg class="icon icon-show" aria-hidden="true"><use href="#i-eye-off"/></svg>
+      </button>
+      <a id="btn-github" class="tool-btn icon-only" href="https://github.com/pengqianhan/open-sky-mirage-world" target="_blank" rel="noopener noreferrer" title="在 GitHub 上查看源码" aria-label="GitHub 仓库">
+        <svg class="icon icon-fill" aria-hidden="true"><use href="#i-github"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 传送目的地弹出菜单 -->
+  <div id="teleport-popover" class="popover hidden" aria-label="快速传送目的地">
+    <div class="pop-title">天外母星 (童童讲述)</div>
+    <button class="pop-item tp-btn" data-teleport="homeworld" type="button"><span class="pop-name">天外母星 · 归墟虫洞台</span><span class="pop-sub">EP19 · 童童讲述的天外故土（也可走进中枢石殿的虫洞）</span></button>
+    <button class="pop-item tp-btn" data-teleport="homePlaza" type="button"><span class="pop-name">天外母星 · 甄选广场</span><span class="pop-sub">EP19 @ 11:00 · 兜帽权贵与戴绿项圈的底层人</span></button>
+    <button class="pop-item tp-btn" data-teleport="homeSkyCity" type="button"><span class="pop-name">天外母星 · 权贵空城</span><span class="pop-sub">EP19 @ 04:45 · 权贵们生活在空中的城池里</span></button>
+    <div class="pop-title">天外旧都 (镜中往日)</div>
+    <button class="pop-item tp-btn" data-teleport="pastCity" type="button"><span class="pop-name">旧都南郊 · 星图镜</span><span class="pop-sub">EP19 @ 04:20 · 科技鼎盛时的城（也可走进空城的星图镜）</span></button>
+    <div class="pop-title">登州地面 (Dengzhou City)</div>
+    <button class="pop-item tp-btn" data-teleport="southGate" type="button"><span class="pop-name">登州南城门外</span><span class="pop-sub">EP01 @ 09:13 · 白灰收分城门仰望蜃景</span></button>
+    <button class="pop-item tp-btn" data-teleport="yamenStreet" type="button"><span class="pop-name">州衙前街 · 反派把守</span><span class="pop-sub">百里渊甲士与铁甲人，F / J 出招</span></button>
+    <button class="pop-item tp-btn" data-teleport="westMarket" type="button"><span class="pop-name">西市 · 望楼巷 · 无形怪物</span><span class="pop-sub">巷中人影半透明，小地图上看不到</span></button>
+    <button class="pop-item tp-btn" data-teleport="gufuGate" type="button"><span class="pop-name">东市南坊 · 顾府大门</span><span class="pop-sub">EP10 @ 38:40 · 顾府护院把守，Boss 顾廷美在院内</span></button>
+    <button class="pop-item tp-btn" data-teleport="qingfengGate" type="button"><span class="pop-name">西市南坊 · 清风楼大门</span><span class="pop-sub">EP01 @ 18:24 · 东子门口迎客，恶霸与 Boss 三爷在楼内</span></button>
+    <button class="pop-item tp-btn" data-teleport="cliffAnchor" type="button"><span class="pop-name">登云崖 · 神机飞爪台 (铁索起点)</span><span class="pop-sub">EP23 @ 19:07 · 巨型玄铁长索发射锚点</span></button>
+    <div class="pop-title">百里渊府</div>
+    <button class="pop-item tp-btn" data-teleport="bailiGate" type="button"><span class="pop-name">百里府 · 大门</span><span class="pop-sub">EP17 · 甲士把守的前院</span></button>
+    <div class="pop-title">空中蜃景 (Sky Mirage / 重生之城)</div>
+    <button class="pop-item tp-btn" data-teleport="mirageGate" type="button"><span class="pop-name">空中蜃景 · 南天城门 (铁索终点)</span><span class="pop-sub">EP23 @ 19:58 · 云海城垣与三层重檐城楼</span></button>
+  </div>
+
+  <!-- 左下角：古风木匾位置牌与双界雷达小地图 -->
+  <div class="hud hud-bottom-left">
+    <div id="hud-location" class="location" aria-live="off"></div>
+    <aside id="minimap-card" class="panel radar" aria-label="登州、铁索与空中蜃景实时雷达图" title="点击打开全屏双界舆图 [M]">
+      <canvas id="minimap-canvas"></canvas>
+      <span class="radar-north" aria-hidden="true">北</span>
+      <kbd class="radar-key">M</kbd>
+    </aside>
+  </div>
+
+  <!-- 底部中央：四大探索模式切换器与按键指南 -->
+  <footer class="hud hud-bottom-center">
+    <div id="hud-controls-hint" class="controls-hint"></div>
+    <nav id="mode-switch" class="panel mode-switch" aria-label="探索模式切换">
+      <span class="mode-indicator" aria-hidden="true"></span>
+      <button id="mode-person" class="mode-btn active" data-mode="person" type="button" title="步行侠客 [1]">
+        <svg class="icon" aria-hidden="true"><use href="#i-walk"/></svg><span class="mode-label">步行</span><kbd>1</kbd>
+      </button>
+      <button id="mode-horse" class="mode-btn" data-mode="horse" type="button" title="策马疾驰 [2]">
+        <svg class="icon" aria-hidden="true"><use href="#i-horse"/></svg><span class="mode-label">策马</span><kbd>2</kbd>
+      </button>
+      <button id="mode-flight" class="mode-btn" data-mode="flight" type="button" title="御风凌空 · 机关飞鸢自由翱翔 [3]">
+        <svg class="icon" aria-hidden="true"><use href="#i-fly"/></svg><span class="mode-label">御风凌空</span><kbd>3</kbd>
+      </button>
+    </nav>
+  </footer>
+
+  <!-- 右下角：海拔/速度仪表盘与机位切换器 -->
+  <div class="hud hud-bottom-right">
+    <section id="hud-cluster" class="panel cluster" aria-label="状态仪表与机位切换">
+      <div class="gauge">
+        <div class="gauge-top">
+          <span id="hud-active-mode" class="gauge-label">捉刀侠客 · 步行轻功</span>
+          <span class="gauge-alt"><span class="gauge-alt-label">海拔</span> <span id="hud-altitude">0</span> m</span>
+        </div>
+        <div class="gauge-speed">
+          <div class="gauge-speed-main">
+            <span id="hud-speed">0</span><span class="gauge-unit">km/h</span>
+          </div>
+          <span id="hud-realm-badge" class="gauge-realm">登州地面</span>
+        </div>
+        <div class="gauge-meter" aria-hidden="true"><span id="hud-speed-meter"></span></div>
+      </div>
+      <div id="camera-switch" class="camera-switch">
+        <button id="cam-prev" class="icon-btn" type="button" title="上一机位" aria-label="上一机位">
+          <svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+        </button>
+        <button id="cam-menu-btn" class="camera-current" type="button" title="全部机位列表 [V 循环切换]">
+          <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg><span id="hud-active-camera">第三人称跟随 (Chase)</span><kbd>V</kbd>
+        </button>
+        <button id="cam-next" class="icon-btn" type="button" title="下一机位 [V]" aria-label="下一机位">
+          <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 机位弹出菜单：3 个跟随视角航拍 -->
+  <div id="camera-popover" class="popover hidden" aria-label="摄影机位选择">
+    <div class="pop-title">角色跟随视角 (Follow)</div>
+    <button class="pop-item cam-btn active" data-camera="chase" type="button"><span class="pop-name">第三人称跟随 (Chase)</span><kbd>5</kbd></button>
+    <button class="pop-item cam-btn" data-camera="action" type="button"><span class="pop-name">仰视动作跟拍 (Low-Angle)</span><kbd>6</kbd></button>
+    <button class="pop-item cam-btn" data-camera="pov" type="button"><span class="pop-name">第一人称视角 (First-Person)</span><kbd>7</kbd></button>
+  </div>
+
+  <!-- 全屏可交互登州与空中蜃景舆图 ([M]) -->
+  <section id="fullmap-modal" class="fullmap-modal hidden" role="dialog" aria-modal="true" aria-label="登州与空中蜃景全屏交互舆图">
+    <div id="fullmap-canvas-wrap" class="fullmap-canvas-wrap">
+      <canvas id="fullmap-canvas"></canvas>
+    </div>
+
+    <div class="fullmap-header">
+      <div class="panel fullmap-title">
+        <span class="mta-bullet" aria-hidden="true">蜃</span>
+        <div>
+          <h2>登州与空中蜃景 · 双界全舆图</h2>
+          <p id="fullmap-player-info" class="fullmap-subtitle">当前位置：登州城 · 朱雀正街</p>
+        </div>
+      </div>
+      <label class="panel fullmap-search-wrap">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="fullmap-search" class="fullmap-search" type="text" placeholder="搜索地标：凤山、八眼井、相国井、清湖河、朝天门、水门、桃花、铁索、蜃景…" aria-label="搜索地标" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="panel fullmap-layer-bar" role="group" aria-label="登州城之图图层控制">
+        <button id="map-focus-dengzhou" class="tool-btn map-layer-btn" type="button" title="聚焦放大登州城内部《登州城之圖》细部">
+          <span class="tool-label">聚焦登州城</span>
+        </button>
+        <button id="map-toggle-waterways" class="tool-btn map-layer-btn" type="button" aria-pressed="false" title="显示/隐藏第二集 (EP02 @ 38:45) 引水淹城朱笔暗渠与 7 大水闸红点">
+          <span class="legend-swatch waterway-dot-swatch"></span><span class="tool-label">朱笔暗渠 (EP02)</span>
+        </button>
+      </div>
+      <button id="close-fullmap-btn" class="panel tool-btn fullmap-close" type="button" title="关闭舆图 [M / Esc]">
+        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg><span class="tool-label">关闭</span><kbd>Esc</kbd>
+      </button>
+    </div>
+
+    <div class="map-controls">
+      <div class="panel map-zoom" role="group" aria-label="舆图缩放与定位">
+        <button id="map-zoom-in" class="icon-btn" type="button" title="放大" aria-label="放大">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+        </button>
+        <button id="map-zoom-out" class="icon-btn" type="button" title="缩小" aria-label="缩小">
+          <svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg>
+        </button>
+        <button id="map-center-player" class="icon-btn" type="button" title="定位当前角色" aria-label="定位当前角色">
+          <svg class="icon" aria-hidden="true"><use href="#i-locate"/></svg>
+        </button>
+        <button id="map-fit-all" class="icon-btn" type="button" title="总览登州、铁索与空中蜃景" aria-label="总览全图">
+          <svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="fullmap-footer">
+      <div id="fullmap-hover-info" class="panel fullmap-status">点击任意街道、7 处朱砂水闸、登云铁索或空中蜃景即可直接传送 · 拖拽平移 · 滚轮缩放</div>
+    </div>
+
+    <aside class="panel fullmap-legend" aria-label="舆图图例">
+      <span class="legend-item"><span class="legend-swatch player-swatch"></span>当前角色</span>
+      <span class="legend-item"><span class="legend-swatch waterway-swatch"></span>EP02 引水暗渠与水闸</span>
+      <span class="legend-item"><span class="legend-swatch canal-swatch"></span>清湖河与名井</span>
+      <span class="legend-item"><span class="legend-swatch chain-swatch"></span>登云铁索</span>
+      <span class="legend-item"><span class="legend-swatch mirage-swatch"></span>空中蜃景 (240m)</span>
+    </aside>
+  </section>
+  <div id="wormhole-transit" class="hidden" aria-hidden="true"><p id="wormhole-line"></p></div>
+</body>
+</html>

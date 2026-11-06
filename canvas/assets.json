@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "assets": {
+    "lead-runtime-caosheng": {
+      "name": "曹晟 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/caosheng.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    },
+    "lead-runtime-zengqian": {
+      "name": "曾倩 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/zengqian.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    },
+    "lead-runtime-fengbuhai": {
+      "name": "封不害 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/fengbuhai.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    },
+    "lead-runtime-yunniang": {
+      "name": "芸娘 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/yunniang.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    },
+    "lead-runtime-xiejingtang": {
+      "name": "谢景棠 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/xiejingtang.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    },
+    "lead-runtime-linhan": {
+      "name": "林寒 · 卡通角色实机预览",
+      "path": "assets/characters/runtime-previews/linhan.jpg",
+      "description": "已接入游戏的 Q 版代码角色（Three.js + TSL）在主演图鉴中的实际渲染截图。非概念图；可在游戏中旋转查看并切换动作。"
+    }
+  }
+}

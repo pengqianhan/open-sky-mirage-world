@@ -1,0 +1,39 @@
+# Local raw data & build cache
+videos/
+data/
+output/
+
+# Local agent skills
+.agents/
+
+# Python & Node caches
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+node_modules/
+dist/
+
+# OS & Editor files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OhMyGame local editor data & imported attachments
+.data/
+assets/imported/
+
+# 剧照（原片截图）仅保存在本地供构建参考，不入库
+assets/all_mirage_curated/
+assets/mirage_master_gallery.html
+
+# 原片截图、海报与写实设定图不入库
+assets/characters/references/
+assets/characters/*/turnaround-*.png
+*.mp4

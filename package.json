@@ -1,0 +1,10 @@
+{
+  "name": "open-sky-mirage-world",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": { "dev": "vite", "build": "vite build", "test:characters": "node scripts/check-characters.mjs", "test:party": "node scripts/check-party.mjs", "test:bridge": "node scripts/check-bridge.mjs", "bridge": "node scripts/party-bridge.mjs", "agents": "node scripts/party-agents.mjs" },
+  "dependencies": { "three": "https://codeload.github.com/mrdoob/three.js/tar.gz/b3396270682287470d161658ac01084d25e8dba6" },
+  "devDependencies": { "vite": "6.4.1" }
+}
