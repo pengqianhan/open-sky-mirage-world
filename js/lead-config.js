@@ -65,4 +65,4 @@ export const LEADS = [
 // 图鉴里的人物位：形态不单独占位
 export const ROSTER = LEADS.filter((c) => !c.formOf);
 export const getLead = (id) => LEADS.find(c => c.id === id) || LEADS[0];
-export const LEAD_ACTIONS = { idle: '待机', walk: '行走', run: '奔跑', ride: '骑乘', chain: '抓索', glide: '御风', attack: '攻击' };
+export const LEAD_ACTIONS = { idle: '待机', walk: '行走', run: '奔跑', ride: '骑乘', chain: '抓索', attack: '攻击' };

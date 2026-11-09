@@ -3,7 +3,7 @@
 // [1] 步行侠客 (person) — 游历登州长街、登云崖石阶与空中蜃景内城广场
 // [2] 策马疾驰 (horse)  — 骑乘骏马驰骋登州城门与山谷官道 (参考 ep01_06 骑马进城)
 // [自动] 铁索飞渡 (chain)  — 使用神机飞爪沿悬空玄铁长索在登州与空中蜃景之间往返攀跃 (参考 ep23_02, ep24_01)
-// [3] 御风凌空 (flight) — 驾驭机关飞鸢自由翱翔天际，穿梭旋涡云洞与浮空仙宫
+// [3] 天外来客 (flight) — 遥控一架飞碟高空总览登州、铁索与空中蜃景（不载角色）
 
 import * as THREE from 'three/webgpu';
 import {
@@ -190,51 +190,77 @@ export class ThirdPersonControllerManager {
     };
   }
 
+  /** 天外来客：一架无人驾驶的飞碟，玩家遥控它在高空总览整个世界（不载任何角色） */
   createFlightEntity() {
     const group = new THREE.Group();
-    const char = createLeadCharacter(this.activeCharacter);
-    group.add(char.group);
-
-    // 机关竹木飞鸢双翼
-    const wingMat = new THREE.MeshStandardNodeMaterial({
-      color: 0xd4ba8a,
-      roughness: 0.65,
-      side: THREE.DoubleSide
+    const hullMat = new THREE.MeshStandardNodeMaterial({ color: 0x9aa6b4, metalness: 0.85, roughness: 0.28 });
+    const trimMat = new THREE.MeshStandardNodeMaterial({ color: 0x3b4452, metalness: 0.7, roughness: 0.4 });
+    const domeMat = new THREE.MeshStandardNodeMaterial({
+      color: 0x8fe8ff, emissive: 0x1d7d99, emissiveIntensity: 0.9,
+      roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.72
     });
-    const sparMat = new THREE.MeshStandardNodeMaterial({ color: 0x422918, roughness: 0.6 });
+    const lightMat = new THREE.MeshStandardNodeMaterial({ color: 0xfff1b0, emissive: 0xffc35a, emissiveIntensity: 2.6 });
+    const beamMat = new THREE.MeshBasicNodeMaterial({
+      color: 0x9ff6ff, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide
+    });
 
-    const glider = new THREE.Group();
-    // 翼梁贴在 Q 版角色肩后，双手正好够到
-    glider.position.set(0, char.metrics.shoulderY + 0.05, -0.2);
+    const saucer = new THREE.Group();
+    saucer.position.y = 1.2;
+    group.add(saucer);
 
-    const mainSpar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 5.2, 6), sparMat);
-    mainSpar.rotation.z = Math.PI * 0.5;
-    glider.add(mainSpar);
+    // 碟身：上下两片扁圆壳 + 中间一圈外缘
+    const disc = new THREE.Mesh(new THREE.LatheGeometry([
+      new THREE.Vector2(0.0, -0.55), new THREE.Vector2(1.4, -0.42), new THREE.Vector2(3.1, -0.12),
+      new THREE.Vector2(3.4, 0.0), new THREE.Vector2(3.1, 0.14), new THREE.Vector2(1.7, 0.5), new THREE.Vector2(0.0, 0.62)
+    ], 40), hullMat);
+    disc.castShadow = true;
+    saucer.add(disc);
 
-    for (const sign of [-1, 1]) {
-      const wingGeo = new THREE.PlaneGeometry(2.3, 1.15);
-      const wing = new THREE.Mesh(wingGeo, wingMat);
-      wing.position.set(sign * 1.25, 0, -0.15);
-      wing.rotation.x = 0.22;
-      wing.rotation.z = -sign * 0.08;
-      glider.add(wing);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.09, 8, 48), trimMat);
+    rim.rotation.x = Math.PI / 2;
+    saucer.add(rim);
+
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(1.25, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), domeMat);
+    dome.position.y = 0.5;
+    saucer.add(dome);
+
+    // 外缘一圈旋转的航灯
+    const lights = new THREE.Group();
+    const bulbGeo = new THREE.SphereGeometry(0.13, 10, 8);
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2;
+      const bulb = new THREE.Mesh(bulbGeo, lightMat);
+      bulb.position.set(Math.cos(a) * 3.05, -0.08, Math.sin(a) * 3.05);
+      lights.add(bulb);
     }
-    group.add(glider);
+    saucer.add(lights);
+
+    // 腹部光环与淡淡的牵引光柱
+    const core = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.9, 0.18, 24), lightMat);
+    core.position.y = -0.52;
+    saucer.add(core);
+    const beam = new THREE.Mesh(new THREE.ConeGeometry(2.6, 9, 28, 1, true), beamMat);
+    beam.position.y = -5.0;
+    saucer.add(beam);
 
     return {
       type: 'flight',
-      label: '机关飞鸢 · 御风凌空',
+      label: '天外来客 · 飞碟总览',
       mesh: group,
-      glider,
-      charRig: char,
+      saucer,
+      lights,
+      beam,
+      charRig: null, // 飞碟上没有角色
       position: new THREE.Vector3(),
       heading: Math.PI,
       speed: 0,
       verticalVel: 0,
       bankAngle: 0,
-      chaseDistance: 9.0,
-      chaseHeight: 3.1,
-      cameraTargetOffset: new THREE.Vector3(0, 1.4, 0)
+      pitchAngle: 0,
+      // 镜头拉远拉高，便于总览
+      chaseDistance: 26.0,
+      chaseHeight: 11.0,
+      cameraTargetOffset: new THREE.Vector3(0, 0, 0)
     };
   }
 
@@ -242,15 +268,16 @@ export class ThirdPersonControllerManager {
     const config = getLead(id);
     if (config.id === this.activeCharacter) return;
     for (const ent of Object.values(this.entities)) ent.attack = null;
-    // Create before swapping so failure preserves all four currently usable entities.
-    const next = Object.keys(this.entities).map(() => createLeadCharacter(config.id));
-    Object.entries(this.entities).forEach(([mode, ent], i) => {
+    const riders = Object.entries(this.entities).filter(([, ent]) => ent.charRig);
+    // Create before swapping so failure preserves all currently usable entities.
+    const next = riders.map(() => createLeadCharacter(config.id));
+    riders.forEach(([mode, ent], i) => {
       ent.charRig.dispose();
       ent.charRig = next[i];
       ent.mesh.add(next[i].group);
       if (mode === 'horse') next[i].group.position.set(0, RIDER_SEAT_Y - next[i].metrics.seatY, .02);
       if (mode === 'chain') next[i].group.position.set(0, -next[i].metrics.chainHang, 0);
-      next[i].pose(({horse:'ride',chain:'chain',flight:'glide'})[mode] || 'idle', 0, 0, 1);
+      next[i].pose(({horse:'ride',chain:'chain'})[mode] || 'idle', 0, 0, 1);
     });
     this.activeCharacter = config.id;
   }
@@ -284,17 +311,17 @@ export class ThirdPersonControllerManager {
     this.chainArmed = false;
   }
 
-  /** 骑马、铁索、飞行的骑手模型跟不上当前主角时，换成当前主角 */
+  /** 骑马、铁索的骑手模型跟不上当前主角时，换成当前主角 */
   ensureRig(mode) {
     const ent = this.entities[mode];
-    if (!ent || ent.charRig.config.id === this.activeCharacter) return;
+    if (!ent || !ent.charRig || ent.charRig.config.id === this.activeCharacter) return;
     const rig = createLeadCharacter(this.activeCharacter);
     ent.charRig.dispose();
     ent.charRig = rig;
     ent.mesh.add(rig.group);
     if (mode === 'horse') rig.group.position.set(0, RIDER_SEAT_Y - rig.metrics.seatY, .02);
     if (mode === 'chain') rig.group.position.set(0, -rig.metrics.chainHang, 0);
-    rig.pose(({horse:'ride',chain:'chain',flight:'glide'})[mode] || 'idle', 0, 0, 1);
+    rig.pose(({horse:'ride',chain:'chain'})[mode] || 'idle', 0, 0, 1);
   }
 
   updateVisibility() {
@@ -359,7 +386,9 @@ export class ThirdPersonControllerManager {
           nextEnt.position.y = groundY;
         }
       } else if (newMode === 'flight') {
-        nextEnt.position.y = Math.max(prevEnt.position.y + 8.0, 28.0);
+        nextEnt.position.y = Math.max(prevEnt.position.y + 30.0, 70.0);
+        nextEnt.speed = 0;
+        nextEnt.verticalVel = 0;
       }
     }
 
@@ -394,8 +423,8 @@ export class ThirdPersonControllerManager {
     ent.speed = 0;
     ent.verticalVel = 0;
     ent.attack = null;
-    const action = ({horse:'ride',chain:'chain',flight:'glide'})[this.activeMode] || 'idle';
-    ent.charRig.pose(action, 0, 0, 1);
+    const action = ({horse:'ride',chain:'chain'})[this.activeMode] || 'idle';
+    ent.charRig?.pose(action, 0, 0, 1);
     ent.mesh.position.copy(ent.position);
     ent.mesh.rotation.set(0, ent.heading, 0);
     return ent.position;
@@ -679,39 +708,50 @@ export class ThirdPersonControllerManager {
       ent.heading = Math.atan2(tg.x, tg.z) + (ent.travelDir < 0 ? Math.PI : 0);
 
     } else if (this.activeMode === 'flight') {
-      // 【御风凌空】：自由三维飞行探索登州、铁索与空中蜃景
-      const turnRate = 1.85;
+      // 【天外来客】：遥控飞碟在高空自由飞行，总览全图
+      const turnRate = 1.7;
       if (left) ent.heading += turnRate * dt;
       if (right) ent.heading -= turnRate * dt;
 
-      const maxSpeed = sprint ? 48.0 : 32.0;
-      const targetSpeed = forward ? maxSpeed : backward ? -16.0 : 0;
-      ent.speed += (targetSpeed - ent.speed) * Math.min(1, dt * 5.0);
+      const maxSpeed = sprint ? 90.0 : 50.0;
+      const targetSpeed = forward ? maxSpeed : backward ? -24.0 : 0;
+      ent.speed += (targetSpeed - ent.speed) * Math.min(1, dt * 3.0);
 
-      const climbTarget = up ? 18.0 : down ? -18.0 : 0;
-      ent.verticalVel += (climbTarget - ent.verticalVel) * Math.min(1, dt * 6.0);
+      const climbTarget = up ? 28.0 : down ? -28.0 : 0;
+      ent.verticalVel += (climbTarget - ent.verticalVel) * Math.min(1, dt * 4.0);
 
       ent.position.x += Math.sin(ent.heading) * ent.speed * dt;
       ent.position.z += Math.cos(ent.heading) * ent.speed * dt;
-      ent.position.y += ent.verticalVel * dt;
+      ent.position.y = Math.min(ent.position.y + ent.verticalVel * dt, 620);
 
-      const minGround = getWorldGroundHeight(ent.position.x, ent.position.z, ent.position.y) + 1.5;
+      const minGround = getWorldGroundHeight(ent.position.x, ent.position.z, ent.position.y) + 4.0;
       if (ent.position.y < minGround) {
         ent.position.y = minGround;
         ent.verticalVel = Math.max(0, ent.verticalVel);
       }
 
-      const targetBank = (left ? 0.35 : right ? -0.35 : 0);
-      ent.bankAngle += (targetBank - ent.bankAngle) * Math.min(1, dt * 6.0);
+      const targetBank = (left ? 0.28 : right ? -0.28 : 0);
+      ent.bankAngle += (targetBank - ent.bankAngle) * Math.min(1, dt * 4.0);
+      const targetPitch = Math.max(-0.18, Math.min(0.18, ent.speed / maxSpeed * 0.16));
+      ent.pitchAngle += (targetPitch - ent.pitchAngle) * Math.min(1, dt * 3.0);
+
+      // 碟身悬浮起伏、航灯环旋转、光柱呼吸
+      ent.lights.rotation.y += dt * 2.4;
+      ent.saucer.position.y = 1.2 + Math.sin(elapsed * 1.6) * 0.25;
+      ent.saucer.rotation.set(ent.pitchAngle, 0, ent.bankAngle);
+      ent.beam.material.opacity = 0.08 + (Math.sin(elapsed * 3.1) * 0.5 + 0.5) * 0.08;
+      ent.mesh.position.copy(ent.position);
+      ent.mesh.rotation.set(0, ent.heading, 0);
+      return;
     }
 
     if (this.activeMode === 'person') {
       this.posePerson(ent, sprint, dt, elapsed);
       return;
     }
-    const action = ({horse:'ride',chain:'chain',flight:'glide'})[this.activeMode];
+    const action = ({horse:'ride',chain:'chain'})[this.activeMode];
     ent.charRig.pose(action, elapsed, Math.abs(ent.speed), dt);
     ent.mesh.position.copy(ent.position);
-    ent.mesh.rotation.set(0, ent.heading, this.activeMode === 'flight' ? ent.bankAngle : 0);
+    ent.mesh.rotation.set(0, ent.heading, 0);
   }
 }

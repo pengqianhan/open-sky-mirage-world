@@ -137,10 +137,10 @@ async function initApp() {
     person: [[['W', 'S'], '前行 / 后退'], [['A', 'D'], '转向'], [['Shift'], '疾奔'], [['Space'], '武侠轻功'], [['F', 'J'], '出招'], [['Tab'], '换人'], [['拖拽'], '环视天际']],
     horse:  [[['W', 'S'], '策马 / 勒缰'], [['A', 'D'], '转向'], [['Shift'], '快马加鞭'], [['拖拽'], '环视天际']],
     chain:  [[['W'], '沿铁索前进，到头自动落地'], [['S'], '往回走'], [['Space', 'Shift'], '流云飞爪加速']],
-    flight: [[['W', 'S'], '御风推进'], [['A', 'D'], '盘旋转向'], [['Space', 'E'], '扶摇直上'], [['Q', 'C'], '俯冲下降']]
+    flight: [[['W', 'S'], '飞碟推进'], [['A', 'D'], '转向'], [['Shift'], '加速'], [['Space', 'E'], '升高'], [['Q', 'C'], '降低'], [['拖拽'], '环视总览']]
   };
 
-  const topSpeedKmh = { person: 52, horse: 94, chain: 140, flight: 172 };
+  const topSpeedKmh = { person: 52, horse: 94, chain: 140, flight: 324 };
 
   function renderControlHints(mode) {
     if (!elControlsHint) return;
@@ -581,7 +581,7 @@ async function initApp() {
       position: controllerManager.getActiveEntity().position.toArray(),
       speed: controllerManager.getActiveEntity().speed,
       gallery: leadGallery.snapshot(),
-      modes: Object.fromEntries(Object.entries(controllerManager.entities).map(([key,e])=>[key,{character:e.charRig.config.id, action:e.charRig.group.userData.action, stats:e.charRig.getStats()}])),
+      modes: Object.fromEntries(Object.entries(controllerManager.entities).map(([key,e])=>[key,e.charRig?{character:e.charRig.config.id, action:e.charRig.group.userData.action, stats:e.charRig.getStats()}:{character:null, action:'ufo'}])),
       render: { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles },
       light: lightingSystem.activePresetId,
       homeworld: realm !== 'earth',

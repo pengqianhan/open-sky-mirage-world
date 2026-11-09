@@ -28,7 +28,7 @@ for(const {id} of LEADS){
   }
   // Legs must stay under the skirt at every gait phase (riding tucks the skirt up on purpose).
   const point=new Vector3();
-  for(const action of ['idle','walk','run','chain','glide','attack']){
+  for(const action of ['idle','walk','run','chain','attack']){
     let worst=Infinity,where='';
     for(let frame=0;frame<48;frame++){
       const time=frame/48*2.4;
@@ -134,6 +134,7 @@ for(const {id} of LEADS){
   const before=controller.getActiveEntity().position.clone();controller.setCharacter(id);
   assert.ok(controller.getActiveEntity().position.equals(before),'Switching identity moved the player');
   for(const [mode,entity] of Object.entries(controller.entities)){
+    if(!entity.charRig){assert.equal(mode,"flight");continue;}
     assert.equal(entity.charRig.config.id,id,`${mode}: stale identity`);
     assert.equal(entity.charRig.group.parent,entity.mesh,`${mode}: detached rig`);
     assert.equal(entity.mesh.children.filter(c=>c.name.startsWith('lead-')).length,1,`${mode}: duplicate player`);
@@ -149,8 +150,9 @@ for(const mode of ['person','horse','chain','flight']){
   const entity = controller.getActiveEntity();
   assert.equal(entity.speed, 0, `${mode}: teleport must stop movement`);
   assert.ok(entity.mesh.position.equals(entity.position), `${mode}: teleport left mesh behind`);
-  assert.equal(entity.charRig.group.userData.action,
-    ({person:'idle',horse:'ride',chain:'chain',flight:'glide'})[mode], `${mode}: wrong teleport pose`);
+  if (mode === 'flight') assert.equal(entity.charRig, null, 'flight: the UFO carries no character');
+  else assert.equal(entity.charRig.group.userData.action,
+    ({person:'idle',horse:'ride',chain:'chain'})[mode], `${mode}: wrong teleport pose`);
 }
 // 铁索：走到下面自动挂上，W 走到另一头自动落地；从上端同样能回来；刚落地不会马上又挂回去。
 {
@@ -233,7 +235,7 @@ for(const {id} of LEADS){
   assert.equal(controller.getActiveEntity().charRig.group.userData.action,'ride',`${id}: attack leaked into riding`);
   controller.setMode('person');
 }
-for(const e of Object.values(controller.entities))e.charRig.dispose();
+for(const e of Object.values(controller.entities))e.charRig?.dispose();
 console.table(results);
 // Combat: every lead can hurt, a strike only reaches what it should, and enemies die and come back.
 {
@@ -531,4 +533,4 @@ console.table(results);
   assert.equal(downed,1,'player never went down under attack');
   sys2.healPlayer();assert.equal(sys2.player.hp,sys2.player.max,'heal failed');
 }
-console.log(`PASS: ${LEADS.length} actors × seven poses, grounding, finite geometry, disposal, all-mode identity and movement, attack grips and input.`);
+console.log(`PASS: ${LEADS.length} actors × six poses, grounding, finite geometry, disposal, all-mode identity and movement, attack grips and input.`);

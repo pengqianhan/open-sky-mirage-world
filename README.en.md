@@ -20,7 +20,7 @@
 
 <br>
 
-The ancient city of **Dengzhou** on the ground (crossroad wards, drum tower, peach-blossom market, the swordsmen's tavern, the northern cliff) and the **Sky Mirage / alien mothership** floating above a sea of clouds (an inverted-cone island, multi-eaved palaces, the central stone hall, a cloud vortex beneath) share a single world coordinate space. They are linked by a ~200 m **iron chain**, and you can travel between them on foot, on horseback, by glider, or by climbing the chain.
+The ancient city of **Dengzhou** on the ground (crossroad wards, drum tower, peach-blossom market, the swordsmen's tavern, the northern cliff) and the **Sky Mirage / alien mothership** floating above a sea of clouds (an inverted-cone island, multi-eaved palaces, the central stone hall, a cloud vortex beneath) share a single world coordinate space. They are linked by a ~200 m **iron chain**, and you can travel between them on foot, on horseback, or by climbing the chain, and a remote-controlled UFO ("Visitor from Beyond") gives an overview from the sky.
 
 <table>
   <tr>

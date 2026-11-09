@@ -862,7 +862,7 @@ export function createLeadCharacter(id = 'caosheng') {
 
   // ---- Animation --------------------------------------------------------------------------
   let lastPose = 'idle', disposed = false;
-  const stowed = (a) => ['ride', 'chain', 'glide'].includes(a);
+  const stowed = (a) => ['ride', 'chain'].includes(a);
   const ropes = joint(motion, 'chain-ropes', [0, 0, 0]);
   function pose(action = 'idle', time = 0, speed = 1, dt = 1 / 60) {
     const moving = action === 'walk' || action === 'run', running = action === 'run';
@@ -893,10 +893,10 @@ export function createLeadCharacter(id = 'caosheng') {
     motion.position.y = running ? Math.abs(Math.cos(phase)) * .035 : 0;
     set(motion, 0, 0, moving ? Math.sin(phase) * (running ? .05 : .035) : 0);
     const stance = c.stance && (action === 'idle' || moving) ? c.stance : NO_STANCE;
-    set(torso, (running ? .16 : action === 'glide' ? .38 : action === 'chain' ? -.05 : 0) + stance.lean, moving ? Math.sin(phase) * .07 : 0);
+    set(torso, (running ? .16 : action === 'chain' ? -.05 : 0) + stance.lean, moving ? Math.sin(phase) * .07 : 0);
     torso.scale.y = lerp(torso.scale.y, 1 + breathe * .008, blend);
     set(head,
-      (running ? -.1 : action === 'glide' ? -.32 : action === 'chain' ? -.12 : moving ? Math.abs(Math.sin(phase)) * .025 : Math.sin(time * .9) * .012) + stance.chin + rubWeight(action, time) * .09,
+      (running ? -.1 : action === 'chain' ? -.12 : moving ? Math.abs(Math.sin(phase)) * .025 : Math.sin(time * .9) * .012) + stance.chin + rubWeight(action, time) * .09,
       action === 'idle' ? Math.sin(time * .55) * .09 : 0,
       action === 'idle' ? Math.sin(time * .7) * .022 : 0);
 
@@ -910,8 +910,8 @@ export function createLeadCharacter(id = 'caosheng') {
       const through = moving ? Math.max(0, Math.cos(phase) * sign) : 0; // peaks mid-swing, so the heel stays inside the skirt at toe-off
       const lift = through * through * (running ? GAIT.runLift : GAIT.walkLift);
       if (moving) reach = Math.max(reach, legReach(swing, 0, lift));
-      set(thigh, action === 'ride' ? -.5 : action === 'glide' ? .34 : action === 'chain' ? .03 + sign * .05 : swing, 0, action === 'ride' ? sign * 1.2 : 0);
-      set(knee, action === 'ride' ? .85 : action === 'glide' ? .3 : action === 'chain' ? .1 + (sign > 0 ? .16 : 0) : lift);
+      set(thigh, action === 'ride' ? -.5 : action === 'chain' ? .03 + sign * .05 : swing, 0, action === 'ride' ? sign * 1.2 : 0);
+      set(knee, action === 'ride' ? .85 : action === 'chain' ? .1 + (sign > 0 ? .16 : 0) : lift);
     }
     // Hips ride on the planted leg, so its foot stays on the ground through the stride.
     if (moving) hips.position.y = lerp(hips.position.y, reach, blend);
@@ -923,22 +923,21 @@ export function createLeadCharacter(id = 'caosheng') {
       if (action === 'idle' || moving) az += sign * stance.armOut;
       if (action === 'ride') { ax = -.95; az = sign * .08; ex = -.55; }
       if (action === 'chain') { ax = -2.85; az = sign * .68; ex = -.16; }
-      if (action === 'glide') { ax = -.08; az = sign * 1.42; ex = -.1; }
       if (c.prop === 'case' && (action === 'idle' || moving) && sign === -1) { ax = 0; az = -.42; ex = -.04; }
       if (holdsPole && (action === 'idle' || moving) && sign === -1) { ax = -.42; az = -.3; ex = -.42; }
       set(arm, ax, 0, az); set(elbow, ex);
     }
 
-    // Bell skirt: lags behind when running, tucks up when riding, streams while flying.
+    // Bell skirt: lags behind when running, tucks up when riding.
     const shake = moving ? Math.sin(phase * 2) * (running ? .03 : .018) : Math.sin(time * 1.7) * .006;
     const sx = action === 'ride' ? 1.2 : 1, sy = action === 'ride' ? .55 : 1;
     const sz = action === 'ride' ? 1.2 : running ? 1.5 : moving ? 1.36 : 1; // room for the striding knees
     skirt.scale.set(lerp(skirt.scale.x, sx, blend), lerp(skirt.scale.y, sy, blend), lerp(skirt.scale.z, sz, blend));
-    set(skirt, (running ? .04 : action === 'glide' ? .5 : 0) + shake, 0, moving ? -Math.sin(phase) * .03 : 0);
+    set(skirt, (running ? .04 : 0) + shake, 0, moving ? -Math.sin(phase) * .03 : 0);
 
     sway.forEach((p, i) => {
-      const trail = running ? .34 : moving ? .14 : action === 'glide' ? .42 : action === 'chain' ? -.1 : 0;
-      const flutter = moving || action === 'glide' ? Math.sin(time * 12 + i) * .035 : Math.sin(time * 1.8 + i) * .018;
+      const trail = running ? .34 : moving ? .14 : action === 'chain' ? -.1 : 0;
+      const flutter = moving ? Math.sin(time * 12 + i) * .035 : Math.sin(time * 1.8 + i) * .018;
       set(p, trail + flutter, 0, Math.sin(time * 2.3 + i) * .02);
     });
 
